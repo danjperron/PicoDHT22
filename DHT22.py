@@ -47,7 +47,7 @@ from machine import Pin
 #
 
     
-@asm_pio(set_init=(PIO.OUT_HIGH),autopush=True, push_thresh=8) #output one byte at a time
+@asm_pio(set_init=(PIO.OUT_HIGH),autopush=True, push_thresh=8)
 def DHT22_PIO():
     # clock set at 500Khz  Cycle is 2us
     # drive output low for at least 20ms
@@ -131,7 +131,11 @@ class DHT22:
         if self.powerPin is not None:
             self.powerPin.value(1)
         utime.sleep_ms(100)
-        self.sm.init(DHT22_PIO,freq=500000,set_base=self.dataPin,in_base=self.dataPin,jmp_pin=self.dataPin) #start state machine
+        #start state machine
+        self.sm.init(DHT22_PIO,freq=500000,
+                     set_base=self.dataPin,
+                     in_base=self.dataPin,
+                     jmp_pin=self.dataPin)
         self.sm.active(1)
         value = []
         for i in range(5):
@@ -145,8 +149,8 @@ class DHT22:
         for i in range(4):
             sumV += value[i]
         if (sumV & 0xff) == value[4]:
-            humidity=((value[0]<<8)  + value[1])/10.0               #DHT11 provides integer humidity (no decimal part)
-            temperature=(((value[2] &0x7f) << 8)  + value[3]) /10.0 #DHT11 provides signed integer temperature (no decimal part)
+            humidity=((value[0]<<8)  + value[1])/10.0
+            temperature=(((value[2] &0x7f) << 8)  + value[3]) /10.0 
             if (value[2] & 0x80) == 0x80:
                 temperature = -temperature            
             return temperature, humidity
@@ -165,5 +169,6 @@ if __name__ == "__main__":
             print(" sensor error")
         else:
             print("{:3.1f}'C  {:3.1f}%".format(T,H))
-        utime.sleep_ms(500)  #DHT22 not responsive if delay to short
+        #DHT22 not responsive if delay to short
+        utime.sleep_ms(500)
         
