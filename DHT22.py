@@ -52,11 +52,11 @@ def DHT22_PIO():
     # clock set at 500Khz  Cycle is 2us
     # drive output low for at least 20ms
     set(y,1)                    # 0
-    set(pindirs,1)              # 1 set pin to output
-    set(pins,0)                 # 2 set pin low
-    set(x,31)                   # 3 prepare countdown, 32*32cycles
+    pull()                      # 1
+    mov(x,osr)                  # 2
+    set(pindirs,1)              # 3 set pin to output
+    set(pins,0)                 # 4 set pin low
     label ('waitx')
-    nop() [31]                  # 4 
     jmp(x_dec,'waitx')          # 5 decrement x reg every 32 cycles
     set(pindirs,0)              # 6 set pin to input 
     # STATE A. Wait for high at least 80us. max should be  very short
@@ -114,9 +114,10 @@ def DHT22_PIO():
 
 class DHT22:
     
-    def __init__(self,dataPin, powerPin=None):
+    def __init__(self,dataPin, powerPin=None,dht11=False):
         self.dataPin = dataPin
         self.powerPin = powerPin
+        self.dht11 = dht11
         self.dataPin.init(Pin.IN, Pin.PULL_UP)
         if self.powerPin is not None:
             self.powerPin.init(Pin.OUT)
@@ -136,6 +137,10 @@ class DHT22:
                      set_base=self.dataPin,
                      in_base=self.dataPin,
                      jmp_pin=self.dataPin)
+        if self.dht11:
+            self.sm.put(10000)
+        else:
+            self.sm.put(1000)
         self.sm.active(1)
         value = []
         for i in range(5):
@@ -149,8 +154,12 @@ class DHT22:
         for i in range(4):
             sumV += value[i]
         if (sumV & 0xff) == value[4]:
-            humidity=((value[0]<<8)  + value[1])/10.0
-            temperature=(((value[2] &0x7f) << 8)  + value[3]) /10.0 
+            if self.dht11:
+                humidity=value[0] & 0x7f
+                temperature=value[2] 
+            else:                
+                humidity=((value[0]<<8)  + value[1])/10.0
+                temperature=(((value[2] &0x7f) << 8)  + value[3]) /10.0 
             if (value[2] & 0x80) == 0x80:
                 temperature = -temperature            
             return temperature, humidity
@@ -162,7 +171,7 @@ if __name__ == "__main__":
     from DHT22 import DHT22
     import utime
     dht_data = Pin(15,Pin.IN,Pin.PULL_UP)
-    dht_sensor=DHT22(dht_data,Pin(14,Pin.OUT))
+    dht_sensor=DHT22(dht_data,Pin(14,Pin.OUT),dht11=False)
     while True:
         T,H = dht_sensor.read()
         if T is None:
