@@ -114,15 +114,16 @@ def DHT22_PIO():
 
 class DHT22:
     
-    def __init__(self,dataPin, powerPin=None,dht11=False):
+    def __init__(self,dataPin, powerPin=None,dht11=False,smID=1):
         self.dataPin = dataPin
         self.powerPin = powerPin
         self.dht11 = dht11
+        self.smID = smID
         self.dataPin.init(Pin.IN, Pin.PULL_UP)
         if self.powerPin is not None:
             self.powerPin.init(Pin.OUT)
             self.powerPin.value(0)
-        self.sm= rp2.StateMachine(1)
+        self.sm= rp2.StateMachine(self.smID)
         
 
 
