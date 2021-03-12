@@ -147,7 +147,7 @@ class DHT22:
         for i in range(5):
             value.append(self.sm.get())
         self.sm.active(0)
-		if self.powerPin is not None:
+        if self.powerPin is not None:
             self.powerPin.value(0)
         return value
  
