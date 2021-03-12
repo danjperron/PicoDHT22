@@ -132,7 +132,7 @@ class DHT22:
     def read_array(self):
         if self.powerPin is not None:
             self.powerPin.value(1)
-        utime.sleep_ms(100)
+        utime.sleep_ms(200)
         #start state machine
         self.sm.init(DHT22_PIO,freq=500000,
                      set_base=self.dataPin,
@@ -147,6 +147,8 @@ class DHT22:
         for i in range(5):
             value.append(self.sm.get())
         self.sm.active(0)
+		if self.powerPin is not None:
+            self.powerPin.value(0)
         return value
  
     def read(self):
