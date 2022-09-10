@@ -1,6 +1,6 @@
 from machine import Pin
 from esp32_gpio_lcd import GpioLcd
-from PIO_DHT22 import PIO_DHT22
+from PicoDHT22 import PicoDHT22
 import time
 
 # P.S.
@@ -19,7 +19,7 @@ lcd = GpioLcd(rs_pin=Pin(0), rw_pin=Pin(1), enable_pin=Pin(2),
 jour = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
 
 # init DHT22 on Pin 15
-dht22 = PIO_DHT22(Pin(15,Pin.IN,Pin.PULL_UP))
+dht22 = PicoDHT22(Pin(15,Pin.IN,Pin.PULL_UP))
 lcd.clear()
 while True:
     T, H = dht22.read()
