@@ -112,7 +112,7 @@ def DHT22_PIO():
 
 
 
-class DHT22:
+class PIO_DHT22:
     
     def __init__(self,dataPin, powerPin=None,dht11=False,smID=1):
         self.dataPin = dataPin
@@ -172,10 +172,10 @@ class DHT22:
         
 if __name__ == "__main__":
     from machine import Pin
-    from DHT22 import DHT22
+    from PIO_DHT22 import PIO_DHT22
     import utime
     dht_data = Pin(15,Pin.IN,Pin.PULL_UP)
-    dht_sensor=DHT22(dht_data,Pin(14,Pin.OUT),dht11=False)
+    dht_sensor=PIO_DHT22(dht_data,Pin(14,Pin.OUT),dht11=False)
     while True:
         T,H = dht_sensor.read()
         if T is None:
