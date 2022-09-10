@@ -1,11 +1,11 @@
 from machine import Pin
-from PIO_DHT22 import PIO_DHT22
+from PicoDHT22 import PicoDHT22
 import utime
 
 # DHT22 libray is available at
 # https://github.com/danjperron/PicoDHT22
 
-dht_sensor=PIO_DHT22(Pin(15,Pin.IN,Pin.PULL_UP),dht11=True)
+dht_sensor=PicoDHT22(Pin(15,Pin.IN,Pin.PULL_UP),dht11=True)
 while True:
     T,H = dht_sensor.read()
     if T is None:
